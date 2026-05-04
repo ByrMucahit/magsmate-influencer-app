@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: applications
+    // Fields:
+    //   - name: string (required)
+    //   - surname: string (required)
+    //   - email: string (required, email format)
+    //   - phone: string (optional)
+    //   - influencerName: string (required)
+    //   - socialMediaLink: string (required, url format)
+    //   - followerCount: number (required, positive)
+    //   - platforms: list (required, strings)
+    //   - status: string (required, enum: ['pending', 'reviewed', 'accepted', 'rejected'])
+    //   - createdAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         request.auth.token.email == "admin@gmail.com" ||
+         request.auth.token.email == "m.mucahitbayar@gmail.com");
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'role', 'createdAt']) &&
+             data.email is string && isValidEmail(data.email) &&
+             data.role in ['admin', 'user'] &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidUrl(url) {
+      return url is string && (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    function isValidApplication(data) {
+      return data.keys().hasAll(['name', 'surname', 'email', 'influencerName', 'socialMediaLink', 'followerCount', 'platforms', 'status', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.surname is string && data.surname.size() > 0 && data.surname.size() < 100 &&
+             isValidEmail(data.email) &&
+             data.influencerName is string && data.influencerName.size() > 0 && data.influencerName.size() < 100 &&
+             isValidUrl(data.socialMediaLink) &&
+             data.followerCount is number && data.followerCount >= 0 &&
+             data.platforms is list && data.platforms.size() > 0 &&
+             data.status in ['pending', 'reviewed', 'accepted', 'rejected'] &&
+             data.createdAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == userId && isValidUser(request.resource.data) && request.resource.data.role == 'user';
+      allow update: if isAdmin();
+    }
+
+    match /applications/{applicationId} {
+      // Anyone can submit an application (create)
+      // We don't require auth for submission to lower barrier for influencers
+      allow create: if isValidApplication(request.resource.data) && request.resource.data.status == 'pending';
+      
+      // Only admin can read, update or delete applications
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "entities": {
+    "influencerApplications": {
+      "title": "Influencer Application",
+      "description": "Application details from influencers wanting to collaborate.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "First name of the influencer" },
+        "surname": { "type": "string", "description": "Last name of the influencer" },
+        "email": { "type": "string", "format": "email", "description": "Contact email" },
+        "phone": { "type": "string", "description": "Contact phone number" },
+        "influencerName": { "type": "string", "description": "Public name or handle" },
+        "platformLinks": { "type": "object", "additionalProperties": { "type": "string", "format": "uri" }, "description": "Links for each selected platform" },
+        "followerCount": { "type": "string", "description": "Subscriber range" },
+        "platforms": { "type": "array", "items": { "type": "string" }, "description": "Social media platforms used" },
+        "contractAccepted": { "type": "boolean", "description": "Whether the influencer accepted the contract" },
+        "status": { "type": "string", "enum": ["pending", "reviewed", "accepted", "rejected"], "description": "Application status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of application" }
+      },
+      "required": ["name", "surname", "email", "influencerName", "platformLinks", "followerCount", "platforms"]
+    },
+    "users": {
+      "title": "User",
+      "description": "User profile and role information.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "applications": {
+      "schema": "influencerApplications",
+      "description": "Collection of influencer applications"
+    },
+    "users": {
+      "schema": "users",
+      "description": "Collection of user roles and profiles"
+    }
+  }
+}
