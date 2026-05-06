@@ -19,7 +19,9 @@ import {
   Globe,
   LogOut,
   LayoutDashboard,
-  LogIn
+  LogIn,
+  Menu,
+  X
 } from 'lucide-react';
 import { auth, db, OperationType, handleFirestoreError } from './lib/firebase';
 import { collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from 'firebase/firestore';
@@ -132,7 +134,7 @@ function ApplicationForm() {
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-6xl md:text-8xl font-black tracking-tighter uppercase mb-6"
+          className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase mb-6"
         >
           Magsmate <br /> Influencer Programı
         </motion.h1>
@@ -552,6 +554,7 @@ function ApplicationForm() {
 function Navigation() {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -576,16 +579,32 @@ function Navigation() {
   const handleLogout = async () => {
     await signOut(auth);
     navigate('/');
+    setIsMenuOpen(false);
   };
+
+  const navLinks = [
+    { title: 'Başvuru', path: '/' },
+    { title: 'Ödeme Bilgileri', path: '/payment-info' },
+  ];
 
   return (
     <header className="border-b border-white/10 sticky top-0 bg-black z-50 text-white">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <img src="https://i.ibb.co/qLpVKFkd/Creative-Color-Brushstroke-Lettering-Logo-3840-x-2160-piksel-2.avif" alt="Magsmate Logo" className="h-10 md:h-12 w-auto object-contain invert brightness-0 grayscale" referrerPolicy="no-referrer" />
+        <Link to="/" className="flex items-center gap-2 z-50" onClick={() => setIsMenuOpen(false)}>
+          <img src="https://i.ibb.co/qLpVKFkd/Creative-Color-Brushstroke-Lettering-Logo-3840-x-2160-piksel-2.avif" alt="Magsmate Logo" className="h-8 md:h-12 w-auto object-contain invert brightness-0 grayscale" referrerPolicy="no-referrer" />
         </Link>
+
+        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium uppercase tracking-widest text-white">
-          <Link to="/" className={cn("hover:opacity-50 transition-opacity", location.pathname === '/' && "underline underline-offset-8 text-white")}>Başvuru</Link>
+          {navLinks.map((link) => (
+            <Link 
+              key={link.path} 
+              to={link.path} 
+              className={cn("hover:opacity-50 transition-opacity", location.pathname === link.path && "underline underline-offset-8 text-white")}
+            >
+              {link.title}
+            </Link>
+          ))}
           {isAdmin && (
             <Link to="/reports" className={cn("hover:opacity-50 transition-opacity flex items-center gap-2", location.pathname === '/reports' && "underline underline-offset-8 text-white")}>
               <LayoutDashboard size={14} /> Raporlar
@@ -602,6 +621,67 @@ function Navigation() {
           )}
           <a href="https://magsmate.com/pages/contact" target="_blank" rel="noopener noreferrer" className="bg-white text-black px-5 py-2 rounded-full hover:bg-white/90 transition-colors">İLETİŞİM</a>
         </nav>
+
+        {/* Mobile Toggle */}
+        <button 
+          className="md:hidden z-50 p-2 hover:bg-white/10 rounded-lg transition-colors"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, x: '100%' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-0 bg-black z-40 flex flex-col p-8 pt-24"
+            >
+              <div className="flex flex-col gap-6 text-2xl font-black uppercase tracking-tighter">
+                {navLinks.map((link) => (
+                  <Link 
+                    key={link.path} 
+                    to={link.path} 
+                    onClick={() => setIsMenuOpen(false)}
+                    className={cn(location.pathname === link.path ? "text-white" : "text-white/40")}
+                  >
+                    {link.title}
+                  </Link>
+                ))}
+                {isAdmin && (
+                  <Link 
+                    to="/reports" 
+                    onClick={() => setIsMenuOpen(false)}
+                    className={cn("flex items-center gap-3", location.pathname === '/reports' ? "text-white" : "text-white/40")}
+                  >
+                    <LayoutDashboard size={24} /> Raporlar
+                  </Link>
+                )}
+                <div className="h-px bg-white/10 my-4" />
+                {user ? (
+                  <button onClick={handleLogout} className="flex items-center gap-3 text-white/40">
+                    <LogOut size={24} /> Çıkış
+                  </button>
+                ) : (
+                  <Link to="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 text-white/40">
+                    <LogIn size={24} /> Giriş
+                  </Link>
+                )}
+                <a 
+                  href="https://magsmate.com/pages/contact" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="mt-8 bg-white text-black px-8 py-5 rounded-2xl text-center text-xl"
+                >
+                  İLETİŞİM
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );
