@@ -49,7 +49,7 @@ service cloud.firestore {
              data.followerCount is string && data.followerCount.size() < 100 &&
              data.platforms is list && data.platforms.size() > 0 && data.platforms.size() < 10 &&
              data.contractAccepted == true &&
-             data.status == 'pending' &&
+             data.status == 'waiting' &&
              data.createdAt == request.time;
     }
 

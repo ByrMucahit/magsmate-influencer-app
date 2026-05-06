@@ -59,6 +59,7 @@ const PLATFORMS = [
   { id: 'youtube', label: 'YouTube', icon: Youtube },
   { id: 'tiktok', label: 'TikTok', icon: Globe },
   { id: 'twitter', label: 'Twitter/X', icon: Twitter },
+  { id: 'another', label: 'Another', icon: LinkIcon },
 ];
 
 function ApplicationForm() {
@@ -105,7 +106,7 @@ function ApplicationForm() {
       const path = 'applications';
       await addDoc(collection(db, path), {
         ...data,
-        status: 'pending',
+        status: 'waiting',
         createdAt: serverTimestamp(),
       });
       setIsSuccess(true);
@@ -142,6 +143,22 @@ function ApplicationForm() {
 
       {/* Form Section */}
       <section className="bg-white border border-black p-8 md:p-12 rounded-3xl shadow-[20px_20px_0px_0px_rgba(0,0,0,1)]">
+        {/* Payment Warning */}
+        {!isSuccess && (
+          <div className="mb-10 p-6 bg-black text-white rounded-2xl flex flex-col md:flex-row items-center gap-6 border-2 border-black">
+            <div className="p-3 bg-white/10 rounded-full">
+              <AlertCircle size={32} className="text-white" />
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="text-lg font-black uppercase tracking-widest mb-1">Ödeme Kontrolü</h3>
+              <p className="text-sm text-white/70 font-medium leading-relaxed">
+                Programa başvurmadan önce katılım bedelini ödediğinizi varsayıyoruz. 
+                Başvuru sonrası ödeme dekontunuzu WhatsApp üzerinden iletmeyi unutmayın.
+              </p>
+            </div>
+          </div>
+        )}
+        
         <AnimatePresence mode="wait">
           {!isSuccess ? (
             <motion.form 
@@ -300,7 +317,7 @@ function ApplicationForm() {
                         return (
                           <div key={platformId} className="space-y-2">
                             <label className="text-[10px] font-bold uppercase tracking-tight flex items-center gap-2 text-black/60">
-                              <Icon size={12} /> {platform.label} Profili
+                              <Icon size={12} /> {platform.label} {platformId === 'another' ? 'Linkiniz' : 'Profili'}
                             </label>
                             <input
                               {...register(`platformLinks.${platformId}` as any)}
@@ -308,7 +325,7 @@ function ApplicationForm() {
                                 "w-full border-b-2 border-black/10 py-2 focus:border-black outline-none transition-colors bg-transparent text-base",
                                 errors.platformLinks?.[platformId] && "border-red-500"
                               )}
-                              placeholder={`https://${platformId}.com/kullaniciadi`}
+                              placeholder={platformId === 'another' ? "https://example.com/profil" : `https://${platformId}.com/kullaniciadi`}
                             />
                             {errors.platformLinks?.[platformId] && (
                               <p className="text-red-500 text-[10px] uppercase font-bold tracking-tighter">
@@ -397,12 +414,25 @@ function ApplicationForm() {
                 <CheckCircle2 size={48} />
               </div>
               <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">Başvurunuz Alındı!</h2>
-              <p className="text-black/60 text-lg mb-10 max-w-md mx-auto">
-                Magsmate ekibi olarak başvurunuzu inceleyeceğiz. En kısa sürede sizinle iletişime geçeceğiz.
+              <p className="text-black/60 text-lg mb-4 max-w-md mx-auto">
+                Magsmate influencer başvurunuz başarıyla tamamlandı. Kayıt işleminizin onaylanması için ödeme dekontunuzu bize iletmeniz gerekmektedir.
               </p>
+              
+              <div className="bg-black/5 p-6 rounded-2xl mb-10 max-w-sm mx-auto border border-black/10">
+                <p className="text-sm font-bold uppercase tracking-widest mb-4">Dekontunuzu İletin</p>
+                <a 
+                  href="https://wa.me/905307374020?text=Merhaba,%20Magsmate%20Influencer%20başvurumu%20yaptım.%20Ödeme%20dekontumu%20buradan%20paylaşıyorum." 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-widest hover:scale-105 transition-transform"
+                >
+                  WhatsApp ile Gönder
+                </a>
+              </div>
+
               <button
                 onClick={() => setIsSuccess(false)}
-                className="border-2 border-black px-8 py-3 rounded-full font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-all"
+                className="border-2 border-black px-8 py-3 rounded-full font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-all text-sm"
               >
                 Yeni Başvuru
               </button>
@@ -555,7 +585,7 @@ function Navigation() {
               <LogIn size={14} /> Giriş
             </Link>
           )}
-          <a href="#" className="bg-white text-black px-5 py-2 rounded-full hover:bg-white/90 transition-colors">İletişim</a>
+          <a href="https://magsmate.com/pages/contact" target="_blank" rel="noopener noreferrer" className="bg-white text-black px-5 py-2 rounded-full hover:bg-white/90 transition-colors">İLETİŞİM</a>
         </nav>
       </div>
     </header>
@@ -632,6 +662,7 @@ export default function App() {
                     <li><a href="https://magsmate.com/pages/visionvise-privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">KVKK</a></li>
                     <li><a href="https://magsmate.com/pages/visionvise-privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Gizlilik Politikası</a></li>
                     <li><a href="https://magsmate.com/pages/visionvise-privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Çerezler</a></li>
+                    <li><a href="https://magsmate.com/pages/contact" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">İLETİŞİM</a></li>
                   </ul>
                 </div>
               </div>

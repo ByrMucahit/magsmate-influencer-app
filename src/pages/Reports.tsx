@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot, doc, getDoc } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth, db, OperationType, handleFirestoreError } from '../lib/firebase';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -96,6 +96,16 @@ export default function Reports() {
     app.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleStatusUpdate = async (id: string, newStatus: string) => {
+    try {
+      await updateDoc(doc(db, 'applications', id), {
+        status: newStatus
+      });
+    } catch (err) {
+      handleFirestoreError(err, OperationType.UPDATE, `applications/${id}`);
+    }
+  };
+
   if (isAdmin === null || isLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -152,6 +162,7 @@ export default function Reports() {
                 <th className="px-6 py-4">İletişim</th>
                 <th className="px-6 py-4 text-right">Takipçi</th>
                 <th className="px-6 py-4">Platformlar</th>
+                <th className="px-6 py-4">Durum</th>
                 <th className="px-6 py-4 text-center">İşlem</th>
               </tr>
             </thead>
@@ -208,8 +219,34 @@ export default function Reports() {
                         ))}
                       </div>
                     </td>
+                    <td className="px-6 py-4">
+                      <div className={cn(
+                        "inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
+                        app.status === 'validated' 
+                          ? "bg-green-50 text-green-700 border-green-200" 
+                          : "bg-yellow-50 text-yellow-700 border-yellow-200"
+                      )}>
+                        {app.status === 'validated' ? 'Onaylandı' : 'Beklemede'}
+                      </div>
+                    </td>
                     <td className="px-6 py-4 text-center">
-                      <div className="text-[10px] font-black uppercase text-black/40">Hazır</div>
+                      {app.status === 'waiting' && (
+                        <button
+                          onClick={() => handleStatusUpdate(app.id, 'validated')}
+                          className="bg-black text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
+                        >
+                          Onayla
+                        </button>
+                      )}
+                      {app.status === 'validated' && (
+                        <button
+                          onClick={() => handleStatusUpdate(app.id, 'waiting')}
+                          className="text-black/40 hover:text-black transition-colors"
+                          title="Bekleme durumuna geri al"
+                        >
+                          <ArrowUpDown size={14} />
+                        </button>
+                      )}
                     </td>
                   </motion.tr>
                 ))
