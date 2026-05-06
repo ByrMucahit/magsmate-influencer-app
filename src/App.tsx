@@ -534,28 +534,28 @@ function Navigation() {
   };
 
   return (
-    <header className="border-b border-black/5 sticky top-0 bg-white/80 backdrop-blur-md z-50">
+    <header className="border-b border-white/10 sticky top-0 bg-black z-50 text-white">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.png" alt="Magsmate Logo" className="h-8 md:h-10 w-auto object-contain" referrerPolicy="no-referrer" />
+          <img src="https://i.ibb.co/qLpVKFkd/Creative-Color-Brushstroke-Lettering-Logo-3840-x-2160-piksel-2.avif" alt="Magsmate Logo" className="h-10 md:h-12 w-auto object-contain invert brightness-0 grayscale" referrerPolicy="no-referrer" />
         </Link>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium uppercase tracking-widest">
-          <Link to="/" className={cn("hover:opacity-50 transition-opacity", location.pathname === '/' && "underline underline-offset-8")}>Başvuru</Link>
+        <nav className="hidden md:flex items-center gap-8 text-sm font-medium uppercase tracking-widest text-white">
+          <Link to="/" className={cn("hover:opacity-50 transition-opacity", location.pathname === '/' && "underline underline-offset-8 text-white")}>Başvuru</Link>
           {isAdmin && (
-            <Link to="/reports" className={cn("hover:opacity-50 transition-opacity flex items-center gap-2", location.pathname === '/reports' && "underline underline-offset-8")}>
+            <Link to="/reports" className={cn("hover:opacity-50 transition-opacity flex items-center gap-2", location.pathname === '/reports' && "underline underline-offset-8 text-white")}>
               <LayoutDashboard size={14} /> Raporlar
             </Link>
           )}
           {user ? (
-            <button onClick={handleLogout} className="flex items-center gap-2 hover:opacity-50 transition-opacity">
+            <button onClick={handleLogout} className="flex items-center gap-2 hover:opacity-50 transition-opacity text-white">
               <LogOut size={14} /> Çıkış
             </button>
           ) : (
-            <Link to="/login" className="flex items-center gap-2 hover:opacity-50 transition-opacity">
+            <Link to="/login" className="flex items-center gap-2 hover:opacity-50 transition-opacity text-white">
               <LogIn size={14} /> Giriş
             </Link>
           )}
-          <a href="#" className="bg-black text-white px-5 py-2 rounded-full hover:bg-black/80 transition-colors">İletişim</a>
+          <a href="#" className="bg-white text-black px-5 py-2 rounded-full hover:bg-white/90 transition-colors">İletişim</a>
         </nav>
       </div>
     </header>
@@ -611,10 +611,7 @@ export default function App() {
             <div className="grid md:grid-cols-2 gap-20">
               <div>
                 <div className="flex items-center gap-2 mb-8">
-                  <div className="w-10 h-10 bg-white flex items-center justify-center rounded-sm">
-                    <span className="text-black font-bold text-xl">M</span>
-                  </div>
-                  <span className="font-black text-2xl tracking-tighter uppercase">Magsmate</span>
+                  <img src="https://i.ibb.co/qLpVKFkd/Creative-Color-Brushstroke-Lettering-Logo-3840-x-2160-piksel-2.avif" alt="Magsmate Logo" className="h-10 w-auto object-contain invert brightness-0" referrerPolicy="no-referrer" />
                 </div>
                 <p className="text-white/50 max-w-sm leading-relaxed">
                   Influencerlar için en kullanışlı ürünleri tasarlıyoruz. 
@@ -625,17 +622,16 @@ export default function App() {
                 <div className="space-y-4">
                   <h4 className="font-bold uppercase tracking-widest text-sm">Sosyal Medya</h4>
                   <ul className="text-white/50 space-y-2 text-sm">
-                    <li><a href="#" className="hover:text-white transition-colors">Instagram</a></li>
-                    <li><a href="#" className="hover:text-white transition-colors">TikTok</a></li>
-                    <li><a href="#" className="hover:text-white transition-colors">YouTube</a></li>
+                    <li><a href="https://www.instagram.com/magsmateofficial/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a></li>
+                    <li><a href="https://www.tiktok.com/@magsmate" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TikTok</a></li>
                   </ul>
                 </div>
                 <div className="space-y-4">
                   <h4 className="font-bold uppercase tracking-widest text-sm">Yasal</h4>
                   <ul className="text-white/50 space-y-2 text-sm">
-                    <li><a href="#" className="hover:text-white transition-colors">KVKK</a></li>
-                    <li><a href="#" className="hover:text-white transition-colors">Gizlilik Politikası</a></li>
-                    <li><a href="#" className="hover:text-white transition-colors">Çerezler</a></li>
+                    <li><a href="https://magsmate.com/pages/visionvise-privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">KVKK</a></li>
+                    <li><a href="https://magsmate.com/pages/visionvise-privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Gizlilik Politikası</a></li>
+                    <li><a href="https://magsmate.com/pages/visionvise-privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Çerezler</a></li>
                   </ul>
                 </div>
               </div>
