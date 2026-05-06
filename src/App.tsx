@@ -31,6 +31,7 @@ import { cn } from './lib/utils';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Reports from './pages/Reports';
+import PaymentInfo from './pages/PaymentInfo';
 
 // Validation Schema
 const formSchema = z.object({
@@ -41,7 +42,7 @@ const formSchema = z.object({
   influencerName: z.string().min(2, 'Influencer adı en az 2 karakter olmalıdır'),
   followerCount: z.string().min(1, 'Takipçi aralığı seçmelisiniz'),
   platforms: z.array(z.string()).min(1, 'En az bir platform seçmelisiniz'),
-  platformLinks: z.record(z.string(), z.string().url('Geçerli bir sosyal medya linki giriniz')),
+  platformLinks: z.record(z.string(), z.string().min(3, 'Geçerli bir profil linki veya kullanıcı adı giriniz')),
   contractAccepted: z.boolean().refine(val => val === true, {
     message: 'Başvuru için sözleşmeyi okuyup kabul etmelisiniz',
   }),
@@ -102,16 +103,21 @@ function ApplicationForm() {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setError(null);
+    console.log('Submitting application data:', data);
     try {
       const path = 'applications';
-      await addDoc(collection(db, path), {
+      const docData = {
         ...data,
         status: 'waiting',
         createdAt: serverTimestamp(),
-      });
+      };
+      console.log('Final Firestore data:', docData);
+      await addDoc(collection(db, path), docData);
+      console.log('Application submitted successfully');
       setIsSuccess(true);
       reset();
     } catch (err) {
+      console.error('Error submitting application:', err);
       handleFirestoreError(err, OperationType.CREATE, 'applications');
       setError('Başvuru sırasında bir hata oluştu. Lütfen tekrar deneyiniz.');
     } finally {
@@ -151,10 +157,16 @@ function ApplicationForm() {
             </div>
             <div className="flex-1 text-center md:text-left">
               <h3 className="text-lg font-black uppercase tracking-widest mb-1">Ödeme Kontrolü</h3>
-              <p className="text-sm text-white/70 font-medium leading-relaxed">
+              <p className="text-sm text-white/70 font-medium leading-relaxed mb-3">
                 Programa başvurmadan önce katılım bedelini ödediğinizi varsayıyoruz. 
                 Başvuru sonrası ödeme dekontunuzu WhatsApp üzerinden iletmeyi unutmayın.
               </p>
+              <Link 
+                to="/payment-info" 
+                className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-white text-black px-4 py-2 rounded-lg hover:bg-white/90 transition-colors"
+              >
+                Nasıl Ödeme Yapılır? <ChevronRight size={12} />
+              </Link>
             </div>
           </div>
         )}
@@ -295,7 +307,10 @@ function ApplicationForm() {
                     );
                   })}
                 </div>
-                {errors.platforms && <p className="text-red-500 text-xs mt-1">{errors.platforms.message}</p>}
+                {errors.platforms && <p className="text-red-500 text-xs mt-1 font-bold">{errors.platforms.message}</p>}
+                {(errors as any).platformLinks?.message && (
+                  <p className="text-red-500 text-xs mt-1 font-bold">{(errors as any).platformLinks.message}</p>
+                )}
               </div>
 
               <AnimatePresence>
@@ -421,7 +436,7 @@ function ApplicationForm() {
               <div className="bg-black/5 p-6 rounded-2xl mb-10 max-w-sm mx-auto border border-black/10">
                 <p className="text-sm font-bold uppercase tracking-widest mb-4">Dekontunuzu İletin</p>
                 <a 
-                  href="https://wa.me/905307374020?text=Merhaba,%20Magsmate%20Influencer%20başvurumu%20yaptım.%20Ödeme%20dekontumu%20buradan%20paylaşıyorum." 
+                  href="https://wa.me/905511038804?text=Merhaba,%20Magsmate%20Influencer%20başvurumu%20yaptım.%20Ödeme%20dekontumu%20buradan%20paylaşıyorum." 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-xl font-bold uppercase tracking-widest hover:scale-105 transition-transform"
@@ -633,6 +648,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/payment-info" element={<PaymentInfo />} />
         </Routes>
 
         {/* Footer */}
@@ -662,6 +678,7 @@ export default function App() {
                     <li><a href="https://magsmate.com/pages/visionvise-privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">KVKK</a></li>
                     <li><a href="https://magsmate.com/pages/visionvise-privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Gizlilik Politikası</a></li>
                     <li><a href="https://magsmate.com/pages/visionvise-privacy-policy" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Çerezler</a></li>
+                    <li><Link to="/payment-info" className="hover:text-white transition-colors">Ödeme Bilgileri</Link></li>
                     <li><a href="https://magsmate.com/pages/contact" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">İLETİŞİM</a></li>
                   </ul>
                 </div>

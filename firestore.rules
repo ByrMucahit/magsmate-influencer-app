@@ -39,13 +39,12 @@ service cloud.firestore {
     function isValidApplication(data) {
       let requiredFields = ['name', 'surname', 'email', 'phone', 'influencerName', 'platformLinks', 'followerCount', 'platforms', 'contractAccepted', 'status', 'createdAt'];
       return data.keys().hasAll(requiredFields) && 
-             data.keys().size() == 11 &&
              data.name is string && data.name.size() >= 2 && data.name.size() < 100 &&
              data.surname is string && data.surname.size() >= 2 && data.surname.size() < 100 &&
              data.email is string && data.email.matches('^.+@.+$') && data.email.size() < 150 &&
-             data.phone is string && data.phone.size() >= 10 && data.phone.size() < 20 &&
+             data.phone is string && data.phone.size() >= 10 && data.phone.size() < 30 &&
              data.influencerName is string && data.influencerName.size() >= 2 && data.influencerName.size() < 100 &&
-             data.platformLinks is map && data.platformLinks.keys().size() > 0 && data.platformLinks.keys().size() < 10 &&
+             data.platformLinks is map && data.platformLinks.keys().size() > 0 &&
              data.followerCount is string && data.followerCount.size() < 100 &&
              data.platforms is list && data.platforms.size() > 0 && data.platforms.size() < 10 &&
              data.contractAccepted == true &&
