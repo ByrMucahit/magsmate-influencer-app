@@ -101,12 +101,26 @@ export default function PaymentInfo() {
             <div className="p-2 bg-yellow-100 rounded-full h-fit">
               <Info size={20} className="text-yellow-700" />
             </div>
-            <div className="space-y-2">
-              <h4 className="font-bold text-yellow-900 text-sm uppercase tracking-widest">Önemli Hatırlatma</h4>
-              <p className="text-yellow-800/80 text-xs leading-relaxed">
-                Ödeme yaptıktan sonra dekontunuzu sistem üzerinden veya direkt WhatsApp numaramıza iletmeniz gerekmektedir. 
-                Dekont iletilmeyen başvurular "beklemede" kalacaktır.
-              </p>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <h4 className="font-bold text-yellow-900 text-sm uppercase tracking-widest">NEDEN KAYIT ÜCRETİ ALIYORUZ?</h4>
+                <p className="text-yellow-800/80 text-xs leading-relaxed">
+                  Kayıt ücreti, paylaşılan ürünlerin güvenliğini sağlamak ve ciddi başvuruları filtrelemek amacıyla bir "güvence bedeli" olarak alınmaktadır. 
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-bold text-yellow-900 text-sm uppercase tracking-widest">İADE POLİTİKASI</h4>
+                <p className="text-yellow-800/80 text-xs leading-relaxed">
+                  Programa kabul edilen influencer'ların ödemesi Magsmate bünyesinde kalacaktır. <strong>Programa kabul edilmeyen adayların ödemeleri, başvuru sonuçlandıktan sonra 15 iş günü içerisinde iade edilecektir.</strong>
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-bold text-yellow-900 text-sm uppercase tracking-widest">ÖNEMLİ HATIRLATMA</h4>
+                <p className="text-yellow-800/80 text-xs leading-relaxed">
+                  Ödeme yaptıktan sonra dekontunuzu sistem üzerinden veya direkt WhatsApp numaramıza iletmeniz gerekmektedir. 
+                  Dekont iletilmeyen başvurular "beklemede" kalacaktır.
+                </p>
+              </div>
             </div>
           </div>
 
