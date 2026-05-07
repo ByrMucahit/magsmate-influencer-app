@@ -49,7 +49,8 @@ service cloud.firestore {
              data.platforms is list && data.platforms.size() > 0 && data.platforms.size() < 10 &&
              data.contractAccepted == true &&
              data.status == 'waiting' &&
-             data.createdAt == request.time;
+             data.createdAt == request.time &&
+             (!('message' in data) || (data.message is string && data.message.size() < 1000));
     }
 
     function isValidUser(data) {

@@ -45,6 +45,7 @@ const formSchema = z.object({
   followerCount: z.string().min(1, 'Takipçi aralığı seçmelisiniz'),
   platforms: z.array(z.string()).min(1, 'En az bir platform seçmelisiniz'),
   platformLinks: z.record(z.string(), z.string().min(3, 'Geçerli bir profil linki veya kullanıcı adı giriniz')),
+  message: z.string().max(1000, 'Mesajınız en fazla 1000 karakter olabilir').optional(),
   contractAccepted: z.boolean().refine(val => val === true, {
     message: 'Başvuru için sözleşmeyi okuyup kabul etmelisiniz',
   }),
@@ -356,6 +357,22 @@ function ApplicationForm() {
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                  <User size={14} /> Kendinizden Bahsedin (İsteğe Bağlı)
+                </label>
+                <textarea
+                  {...register('message')}
+                  rows={4}
+                  className={cn(
+                    "w-full border-2 border-black/10 p-4 rounded-xl focus:border-black outline-none transition-colors bg-transparent text-base resize-none",
+                    errors.message && "border-red-500"
+                  )}
+                  placeholder="Bize biraz kendinizden, içerik tarzınızdan ve neden Magsmate ile çalışmak istediğinizden bahsedebilirsiniz."
+                />
+                {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>}
+              </div>
 
               <div className="space-y-4 pt-4 border-t border-black/5">
                 <div className="flex flex-col gap-3">

@@ -12,10 +12,14 @@ import {
   Search,
   Filter,
   ArrowUpDown,
+  MessageSquare,
+  X,
+  MessageCircle,
   ExternalLink,
   ShieldAlert
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { AnimatePresence } from 'motion/react';
 
 interface Application {
   id: string;
@@ -28,6 +32,7 @@ interface Application {
   followerCount: string;
   platforms: string[];
   status: string;
+  message?: string;
   createdAt: any;
 }
 
@@ -36,6 +41,7 @@ export default function Reports() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -159,6 +165,7 @@ export default function Reports() {
               <tr className="bg-black text-white uppercase text-xs font-bold tracking-widest">
                 <th className="px-6 py-4">Tarih</th>
                 <th className="px-6 py-4">Influencer</th>
+                <th className="px-6 py-4 text-center">Mesaj</th>
                 <th className="px-6 py-4">İletişim</th>
                 <th className="px-6 py-4 text-right">Takipçi</th>
                 <th className="px-6 py-4">Platformlar</th>
@@ -183,6 +190,19 @@ export default function Reports() {
                     <td className="px-6 py-4">
                       <div className="font-bold">{app.name} {app.surname}</div>
                       <div className="text-xs text-black/40 uppercase tracking-tighter font-medium">{app.influencerName}</div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      {app.message ? (
+                        <button
+                          onClick={() => setSelectedMessage(app.message!)}
+                          className="p-2 bg-black/5 rounded-full hover:bg-black/10 transition-colors"
+                          title="Mesajı Görüntüle"
+                        >
+                          <MessageCircle size={18} />
+                        </button>
+                      ) : (
+                        <span className="text-black/10">-</span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-sm">
@@ -261,6 +281,50 @@ export default function Reports() {
           </table>
         </div>
       </div>
+
+      {/* Message Popup */}
+      <AnimatePresence>
+        {selectedMessage && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white p-8 md:p-12 rounded-[2.5rem] border-2 border-black max-w-2xl w-full shadow-[20px_20px_0px_0px_rgba(0,0,0,0.1)] relative"
+            >
+              <button 
+                onClick={() => setSelectedMessage(null)}
+                className="absolute top-6 right-6 p-2 hover:bg-black/5 rounded-full transition-colors"
+              >
+                <X size={24} />
+              </button>
+              
+              <div className="flex items-center gap-4 mb-8">
+                <div className="p-3 bg-black rounded-2xl">
+                  <MessageSquare size={32} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40">Kullanıcı Mesajı</p>
+                  <h2 className="text-xl font-black uppercase tracking-tight">KENDİNİ TANITMA</h2>
+                </div>
+              </div>
+
+              <div className="bg-black/5 p-8 rounded-2xl border border-black/5 max-h-[40vh] overflow-y-auto">
+                <p className="text-lg leading-relaxed whitespace-pre-wrap italic">
+                  "{selectedMessage}"
+                </p>
+              </div>
+
+              <button
+                onClick={() => setSelectedMessage(null)}
+                className="w-full mt-10 bg-black text-white py-4 rounded-xl font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all"
+              >
+                Kapat
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

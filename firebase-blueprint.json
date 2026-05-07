@@ -15,6 +15,7 @@
         "platforms": { "type": "array", "items": { "type": "string" }, "description": "Social media platforms used" },
         "contractAccepted": { "type": "boolean", "description": "Whether the influencer accepted the contract" },
         "status": { "type": "string", "enum": ["pending", "reviewed", "accepted", "rejected"], "description": "Application status" },
+        "message": { "type": "string", "description": "Optional self-introductory message from the influencer" },
         "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of application" }
       },
       "required": ["name", "surname", "email", "influencerName", "platformLinks", "followerCount", "platforms"]
